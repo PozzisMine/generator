@@ -102,4 +102,96 @@ function generate(){
         .getElementById("ids")
         .value
         .split("\n")
-        .
+        .map(x => x.trim())
+        .filter(Boolean);
+
+    const result = [];
+
+    lines.forEach(line => {
+
+        let id = line;
+
+        const match =
+            line.match(
+                /(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+            );
+
+        if(match){
+            id = match[1];
+        }
+
+        result.push(
+            `https://livecounts.lol/addVideo?id=${id}`
+        );
+
+    });
+
+    document.getElementById("output").value =
+        result.join("\n");
+
+    document.getElementById("count").textContent =
+        result.length;
+}
+
+function copyLinks(){
+
+    const text =
+        document.getElementById("output").value;
+
+    navigator.clipboard.writeText(text);
+
+    alert("Ссылки скопированы");
+}
+
+function downloadTxt(){
+
+    const text =
+        document.getElementById("output").value;
+
+    const blob =
+        new Blob([text], {
+            type:"text/plain"
+        });
+
+    const link =
+        document.createElement("a");
+
+    link.href =
+        URL.createObjectURL(blob);
+
+    link.download =
+        "livecounts_links.txt";
+
+    link.click();
+}
+
+async function openAll(){
+
+    const links =
+        document
+        .getElementById("output")
+        .value
+        .split("\n")
+        .filter(Boolean);
+
+    if(!links.length){
+        alert("Сначала создайте ссылки");
+        return;
+    }
+
+    const delay = 2000;
+
+    for(const link of links){
+
+        window.open(
+            link,
+            "_blank"
+        );
+
+        await new Promise(
+            r => setTimeout(r, delay)
+        );
+    }
+}
+
+</script>
